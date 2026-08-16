@@ -1,0 +1,184 @@
+<html class="5">
+    <head>
+    <title>素因数分解</title>
+
+    
+    </head>
+
+<body>
+
+<style>
+
+p{
+font-size:30px;
+text-align: right;
+}
+</style>
+
+<h1 id="a"style="font-size:100px;text-align: center;color:blue;">素因数分解<h1>
+
+    <input type="text" id="bunkaiBox" maxlength="20" style="font-size:35px;"></input>
+    <button id="bunkaiStart" style="font-size:50px; height: auto; width:auto;">実行</button>
+
+
+
+
+<p id="keta">桁数：<p>
+<p id="bunkai">素因数分解：<p>
+    
+
+<script>
+
+const input=document.getElementById("bunkaiBox");
+const btn=document.getElementById("bunkaiStart");
+const bunkai=document.getElementById("bunkai");
+
+
+let bunkairesult = [];
+let documentketa = document.getElementById("keta")
+
+
+btn.onclick=()=>{
+   if(isHalfNumber(input.value)){
+    let n = BigInt(input.value); 
+    bunkairesult = factor(n).sort((a,b)=> (a<b?-1:1));
+    bunkairesult = bunkairesult.map(v => String(v).replace("n",""));
+
+    for(let i=0;i<bunkairesult.length-1;i++){
+        bunkairesult[i] += "×";
+    }
+
+    console.log(bunkairesult);
+bunkai.innerText="素因数分解："+bunkairesult;
+
+}
+
+
+else{
+    alert("半角数字の整数を入力してください")
+}
+
+
+let keta = input.value.length;
+documentketa.textContent = "桁数：" + keta;
+
+}
+
+
+
+function isHalfNumber(str){
+    return /^[0-9]+$/.test(str);
+}
+
+
+
+
+function gcd(a, b) {
+    while (b !== 0n) {
+        [a, b] = [b, a % b];
+    }
+    return a;
+}
+
+function modPow(base, exp, mod) {
+    let result = 1n;
+    base %= mod;
+
+    while (exp > 0n) {
+        if (exp & 1n) result = (result * base) % mod;
+        base = (base * base) % mod;
+        exp >>= 1n;
+    }
+
+    return result;
+}
+
+function isPrime(n) {
+    if (n < 2n) return false;
+    for (let p of [2n,3n,5n,7n,11n,13n,17n,19n,23n]) {
+        if (n === p) return true;
+        if (n % p === 0n) return n === p;
+    }
+
+    let d = n - 1n;
+    let s = 0n;
+
+    while ((d & 1n) === 0n) {
+        d >>= 1n;
+        s++;
+    }
+
+    const bases = [2n,325n,9375n,28178n,450775n,9780504n,1795265022n];
+
+    for (let a of bases) {
+        if (a % n === 0n) continue;
+
+        let x = modPow(a, d, n);
+        if (x === 1n || x === n - 1n) continue;
+
+        let composite = true;
+
+        for (let r = 1n; r < s; r++) {
+            x = (x * x) % n;
+            if (x === n - 1n) {
+                composite = false;
+                break;
+            }
+        }
+
+        if (composite) return false;
+    }
+
+    return true;
+}
+
+function pollardsRho(n) {
+    if (n % 2n === 0n) return 2n;
+
+    while (true) {
+        let x = BigInt(Math.floor(Math.random() * 1000000)) % (n - 2n) + 2n;
+        let y = x;
+        let c = BigInt(Math.floor(Math.random() * 1000000)) % (n - 1n) + 1n;
+        let d = 1n;
+
+        while (d === 1n) {
+            x = (x * x + c) % n;
+            y = (y * y + c) % n;
+            y = (y * y + c) % n;
+
+            d = gcd(x > y ? x - y : y - x, n);
+
+            if (d === n) break;
+        }
+
+        if (d > 1n && d < n) return d;
+    }
+}
+
+function factor(n, result = []) {
+    if (n === 1n) return result;
+
+    if (isPrime(n)) {
+        result.push(n);
+        return result;
+    }
+
+    let d = pollardsRho(n);
+
+    factor(d, result);
+    factor(n / d, result);
+
+    return result;
+}
+
+// 使用例
+
+ 
+
+
+
+
+</script>
+
+</body>
+</html>
