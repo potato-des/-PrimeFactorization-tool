@@ -65,6 +65,29 @@ documentketa.textContent = "桁数：" + keta;
 }
 
 
+input.addEventListener("keydown", (event)=>{
+    if(event.key === "Enter"){
+        if(isHalfNumber(input.value)){ 
+            let n = BigInt(input.value);  
+            bunkairesult = factor(n).sort((a,b)=> (a<b?-1:1)); 
+            bunkairesult = bunkairesult.map(v => String(v).replace("n","")); 
+ 
+            for(let i=0;i<bunkairesult.length-1;i++){ 
+                bunkairesult[i] += "×"; 
+            } 
+ 
+            console.log(bunkairesult); 
+            bunkai.innerText="素因数分解："+bunkairesult; 
+        } 
+        else{ 
+            alert("半角数字の整数を入力してください"); 
+        } 
+ 
+        let keta = input.value.length; 
+        documentketa.textContent = "桁数：" + keta; 
+    }
+});
+
 
 function isHalfNumber(str){
     return /^[0-9]+$/.test(str);
